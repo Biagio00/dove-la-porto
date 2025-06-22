@@ -1,0 +1,13 @@
+<svg height="40px" width="40px" fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+    <linearGradient id="Gradient2" x1="0" x2="1" y1="0" y2="1">
+        <stop offset="5%" stop-color="#00c914" />
+        <stop offset="80%" stop-color="#00690a" />
+    </linearGradient>
+    </defs>
+    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+    <g id="SVGRepo_iconCarrier" fill="url(#Gradient2)">
+        <path d="M 18 1 H 6 A 1 1 0 0 0 5 2 V 8 a 7 7 0 0 0 6 6.92 V 21 H 8 a 1 1 0 0 0 0 2 h 8 a 1 1 0 0 0 0 -2 H 13 V 14.92 A 7 7 0 0 0 19 8 V 2 A 1 1 0 0 0 18 1 Z Z"></path>
+    </g>
+</svg>

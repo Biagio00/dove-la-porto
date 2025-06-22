@@ -3,7 +3,7 @@
 // import viteLogo from '/vite.svg'
 import './App.css'
 import {BrowserRouter, NavLink, Route, Routes} from "react-router";
-import {Container, Nav, Navbar} from "react-bootstrap";
+import {Container, Image, Nav, Navbar} from "react-bootstrap";
 import {Home} from "./pages/Home.tsx";
 import {MapPos} from "./pages/MapPos.tsx";
 import {Positions} from "./pages/Positions.tsx";
@@ -18,7 +18,7 @@ function App() {
 
                     <Navbar collapseOnSelect expand="sm" className="bg-body-tertiary" sticky="top">
                         <Container>
-                            <Navbar.Brand as={NavLink} to="/">Dove la porto?</Navbar.Brand>
+                            <Navbar.Brand as={NavLink} to="/"><Image width={40} height={40} src={"/dlp.svg"} alt={"logo"} /> Dove la porto?</Navbar.Brand>
                             <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
                             <Navbar.Collapse id="responsive-navbar-nav">
                                 <Nav className="me-auto">
