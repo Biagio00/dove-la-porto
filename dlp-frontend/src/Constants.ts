@@ -1,2 +1,2 @@
-export const trashTypesStr: string[] = ["station", "all", "glass-only"]
+export const trashTypesStr: string[] = ["completa", "solo-vetro", "discarica"]
 

@@ -1,13 +1,14 @@
 import type {ModificationPoint} from "../Types.ts";
 import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import {AdvancedMarker, InfoWindow, useAdvancedMarkerRef} from "@vis.gl/react-google-maps";
-import {useState} from "react";
+import {type RefObject, useState} from "react";
 import {trashTypesStr} from "../Constants.ts";
 import {TrashTypeImage} from "./TrashTypeImage.tsx";
 
 export const ModifiableAdvancedMarker = (
-    {point, onChanged, onDeleted}: {
+    {point, draggingRef, onChanged, onDeleted}: {
         point: ModificationPoint,
+        draggingRef: RefObject<boolean>,
         onChanged: (modificationPoint: ModificationPoint) => void,
         onDeleted: (modificationPoint: ModificationPoint) => void
     }) => {
@@ -46,7 +47,12 @@ export const ModifiableAdvancedMarker = (
         <>
             <AdvancedMarker key={point.uuid} position={point.position} ref={advMarkerRef}
                             clickable={true} onClick={() => setInfowindowOpen(true)}
-                            draggable={true} onDragEnd={(e) => {
+                            draggable={true}
+                            onDragStart={() => {
+                // console.log(e)
+                draggingRef.current = true;
+            }}
+                            onDragEnd={(e) => {
                 if (e.latLng == null) {
                     return
                 }
@@ -66,8 +72,29 @@ export const ModifiableAdvancedMarker = (
 
                     <Container>
                         <Row>
+                            <Col className={"text-center"}>
+                                <Button size={"sm"} variant="danger" onClick={
+                                    () => {
+                                        onDeleted({...point, modified: true})
+                                    }
+                                }>
+                                    ✖ Elimina
+                                </Button>
+                            </Col>
+                        </Row>
+                        <Row className={"mt-1"}>
                             <Col>
                                 ID: {point.uuid}
+                            </Col>
+                        </Row>
+                        <Row className={"mt-1"}>
+                            <Col>
+                                Latitudine: {point.position.lat.toFixed(6)}
+                            </Col>
+                        </Row>
+                        <Row className={"mt-1"}>
+                            <Col>
+                                Longitudine: {point.position.lng.toFixed(6)}
                             </Col>
                         </Row>
                         <Row className={"mt-1"}>
@@ -81,27 +108,6 @@ export const ModifiableAdvancedMarker = (
                                         <option key={typeStr} value={typeStr}>{typeStr}</option>
                                     ))}
                                 </Form.Select>
-                            </Col>
-                        </Row>
-                        <Row className={"mt-1"}>
-                            <Col>
-                                Latitude: {point.position.lat.toFixed(6)}
-                            </Col>
-                        </Row>
-                        <Row className={"mt-1"}>
-                            <Col>
-                                Longitude: {point.position.lng.toFixed(6)}
-                            </Col>
-                        </Row>
-                        <Row className={"mt-1"}>
-                            <Col className={"text-center"}>
-                                <Button size={"sm"} variant="danger" onClick={
-                                    () => {
-                                        onDeleted({...point, modified: true})
-                                    }
-                                }>
-                                    ✖ Delete
-                                </Button>
                             </Col>
                         </Row>
                     </Container>
