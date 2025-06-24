@@ -1,8 +1,7 @@
-import {AdvancedMarker, ControlPosition, InfoWindow, Map, MapControl} from "@vis.gl/react-google-maps";
-import {Col, Container, Row, Image, Button, ListGroup, Form} from "react-bootstrap";
+import {InfoWindow, Map} from "@vis.gl/react-google-maps";
+import {Col, Container, Row, Button, ListGroup, Form} from "react-bootstrap";
 import {useCallback, useMemo, useRef, useState} from "react";
 import type {ModificationPoint} from "../Types.ts";
-import {useDrawingManager} from "../hooks/useDrawingManager.tsx";
 import {ModifiableAdvancedMarker} from "../components/ModifiableAdvancedMarker.tsx";
 import {MapLegend} from "../components/MapLegend.tsx";
 import {AddNewMarker} from "../components/AddNewMarker.tsx";
@@ -101,8 +100,10 @@ const MapPos = () => {
                             <MapLegend/>
                             <Map
                                 mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
+                                clickableIcons={false}
                                 // className={"vh-100 vw-100 position-fixed"}
-                                className={"vh-100"}
+                                //className={"vh-100"}
+                                style={{maxHeight: "90vh", height: "90vh"}}
                                 defaultCenter={{lat: 43.1710196, lng: 10.569224}}
                                 defaultZoom={14}
                                 gestureHandling={'greedy'}
@@ -173,7 +174,7 @@ const MapPos = () => {
                         </Button>
                         </Container>
 
-                        <ListGroup className={"overflow-y-scroll mt-2"} style={{maxHeight: "85vh"}} variant={"flush"}>
+                        <ListGroup className={"overflow-y-scroll mt-2"} style={{maxHeight: "85vh", height: "85vh"}} variant={"flush"}>
                         {points.map(point => (
                             <ListGroup.Item key={point.uuid + "test"} variant={point.modified ? "warning" : ""}>
                                 <Container>

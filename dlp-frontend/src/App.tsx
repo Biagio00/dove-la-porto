@@ -6,7 +6,7 @@ import {BrowserRouter, NavLink, Route, Routes} from "react-router";
 import {Container, Image, Nav, Navbar} from "react-bootstrap";
 import {Home} from "./pages/Home.tsx";
 import {MapPos} from "./pages/MapPos.tsx";
-import {Positions} from "./pages/Positions.tsx";
+import {ViewMap} from "./pages/ViewMap.tsx";
 import {Users} from "./pages/Users.tsx";
 import {APIProvider} from "@vis.gl/react-google-maps";
 
@@ -42,8 +42,8 @@ function App() {
 
                         <Route path="/" element={<Home/>}/>
                         <Route path="/home" element={<Home/>}/>
-                        <Route path="/map" element={<MapPos/>}/>
-                        <Route path="/positions" element={<Positions/>}/>
+                        <Route path="/map" element={<ViewMap/>}/>
+                        <Route path="/positions" element={<MapPos/>}/>
                         <Route path="/users" element={<Users/>}/>
                     </Routes>
                 </APIProvider>

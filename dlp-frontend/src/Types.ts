@@ -2,10 +2,14 @@
 // export interface ModificationPoint {position: google.maps.LatLngLiteral, type: string}
 // export interface Point extends ModificationPoint {id: string}
 
-export interface ModificationPoint {
+
+export interface ViewPoint {
     position: google.maps.LatLngLiteral,
     type: string,
     uuid: string,
+}
+
+export interface ModificationPoint extends ViewPoint {
     modified: boolean
 }
 
