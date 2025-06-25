@@ -1,8 +1,8 @@
-import type {ModificationPoint} from "../Types.ts";
+import type {ModificationPoint} from "../utils/Types.ts";
 import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import {AdvancedMarker, InfoWindow, useAdvancedMarkerRef} from "@vis.gl/react-google-maps";
 import {type RefObject, useState} from "react";
-import {trashTypesStr} from "../Constants.ts";
+import {trashTypesStr} from "../utils/Constants.ts";
 import {TrashTypeImage} from "./TrashTypeImage.tsx";
 
 export const ModifiableAdvancedMarker = (

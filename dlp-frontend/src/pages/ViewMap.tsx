@@ -1,5 +1,5 @@
 import {useState} from "react";
-import type {ViewPoint} from "../Types.ts";
+import type {ViewPoint} from "../utils/Types.ts";
 import {Map} from "@vis.gl/react-google-maps";
 import {v4 as uuidv4} from "uuid";
 import {MapLegend} from "../components/MapLegend.tsx";

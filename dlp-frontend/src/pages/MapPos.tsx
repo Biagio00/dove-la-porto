@@ -1,11 +1,11 @@
 import {InfoWindow, Map} from "@vis.gl/react-google-maps";
 import {Col, Container, Row, Button, ListGroup, Form} from "react-bootstrap";
 import {useCallback, useMemo, useRef, useState} from "react";
-import type {ModificationPoint} from "../Types.ts";
+import type {ModificationPoint} from "../utils/Types.ts";
 import {ModifiableAdvancedMarker} from "../components/ModifiableAdvancedMarker.tsx";
 import {MapLegend} from "../components/MapLegend.tsx";
 import {AddNewMarker} from "../components/AddNewMarker.tsx";
-import {trashTypesStr} from "../Constants.ts";
+import {trashTypesStr} from "../utils/Constants.ts";
 import {v4 as uuidv4} from 'uuid';
 
 const MapPos = () => {

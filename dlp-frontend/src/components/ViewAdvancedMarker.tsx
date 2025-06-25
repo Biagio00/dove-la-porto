@@ -1,7 +1,7 @@
 import {AdvancedMarker, InfoWindow, useAdvancedMarkerRef} from "@vis.gl/react-google-maps";
 import {TrashTypeImage} from "./TrashTypeImage.tsx";
 import {Button, Col, Container, Row} from "react-bootstrap";
-import type {ViewPoint} from "../Types.ts";
+import type {ViewPoint} from "../utils/Types.ts";
 import {useState} from "react";
 
 export const ViewAdvancedMarker = ({point}: { point: ViewPoint }) => {
@@ -24,7 +24,7 @@ export const ViewAdvancedMarker = ({point}: { point: ViewPoint }) => {
                             <Col className={"text-center"}>
                                 <Button variant={"primary"}
                                         href={"geo:" + point.position.lat + "," + point.position.lng}>
-                                    Viaggia qui
+                                    Viaggia qui 🚗
                                 </Button>
                             </Col>
                         </Row>
@@ -32,7 +32,7 @@ export const ViewAdvancedMarker = ({point}: { point: ViewPoint }) => {
                             <Col className={"text-center"}>
                                 <Button variant={"secondary"} target={"_blank"}
                                         href={"https://www.google.com/maps/search/?api=1&query=" + point.position.lat + "," + point.position.lng}>
-                                    Apri su<br/>Google Maps
+                                    Apri su<br/>Google Maps 🗺️
                                 </Button>
                             </Col>
                         </Row>

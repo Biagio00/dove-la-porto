@@ -1,6 +1,6 @@
-import {trashTypesStr} from "../Constants.ts";
+import {trashTypesStr} from "../utils/Constants.ts";
 import {Button, Col, Container, Form, Row} from "react-bootstrap";
-import type {ModificationPoint} from "../Types.ts";
+import type {ModificationPoint} from "../utils/Types.ts";
 import {useState} from "react";
 import {v4 as uuidv4} from 'uuid';
 

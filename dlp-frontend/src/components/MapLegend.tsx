@@ -1,5 +1,5 @@
 import {Col, Container, Row, Table} from "react-bootstrap";
-import {trashTypesStr} from "../Constants.ts";
+import {trashTypesStr} from "../utils/Constants.ts";
 import {TrashTypeImage} from "./TrashTypeImage.tsx";
 
 export const MapLegend = () => {

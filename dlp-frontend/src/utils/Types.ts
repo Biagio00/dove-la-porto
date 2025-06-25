@@ -2,6 +2,15 @@
 // export interface ModificationPoint {position: google.maps.LatLngLiteral, type: string}
 // export interface Point extends ModificationPoint {id: string}
 
+import type {User} from "firebase/auth";
+
+export interface UserData {
+    currentUser: User | null,
+    loading: boolean,
+    // error: string | null,
+    role: number
+}
+
 
 export interface ViewPoint {
     position: google.maps.LatLngLiteral,

@@ -3,7 +3,7 @@
  */
 import {useMap, useMapsLibrary} from '@vis.gl/react-google-maps';
 import {type RefObject, useEffect, useState} from 'react';
-import type {DrawResult} from "../Types.ts";
+import type {DrawResult} from "../utils/Types.ts";
 
 export function useDrawingManager(
     initialValue: google.maps.drawing.DrawingManager | null = null
