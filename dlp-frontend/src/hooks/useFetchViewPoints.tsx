@@ -2,6 +2,7 @@ import {collection, getDocs, query, Timestamp, where } from "firebase/firestore"
 import type {ViewPoint} from "../utils/Types.ts";
 import {useEffect, useState} from 'react';
 import {fireDB} from "../utils/Firebase.ts";
+import {sendUpdatedPointsNotification} from "../utils/NotificationManager.ts";
 
 
 export const useFetchViewPoints = (
@@ -62,7 +63,7 @@ export const useFetchViewPoints = (
                     console.log("New points found");
                     await fetchPoints()
                     if (doSendNotification) {
-                        //TODO: send notification
+                        await sendUpdatedPointsNotification(querySnapshot.docs.length)
                     }
                 }
             } catch (error) {

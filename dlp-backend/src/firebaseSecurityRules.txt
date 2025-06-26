@@ -1,3 +1,29 @@
+------ VERSIONE 2 CHE CONSENTE SOLO AL FIREBASE-ADMIN DI FARE LE MODIFICHE, GLI UTENTI INTERAGISCONO CON L'API DEL SERVER ------
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /positions/{positionId} {
+    	allow get, list: if true
+      allow write: if false
+    }
+
+  	match /users-info/{userUid} {
+    	allow get: if request.auth != null && request.auth.uid == userUid
+      allow read: if request.auth != null && exists(/databases/$(database)/documents/users-info/$(request.auth.uid)) &&
+             (get(/databases/$(database)/documents/users-info/$(request.auth.uid)).data.role >= 5)
+      allow write: if false
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+
+------ VERSIONE 1 CHE CONSENTIVA LE MODIFICHE AI CLIENT CHE AVEVANO I PERMESSI ------
 rules_version = '2';
 
 service cloud.firestore {
@@ -20,3 +46,4 @@ service cloud.firestore {
     }
   }
 }
+
