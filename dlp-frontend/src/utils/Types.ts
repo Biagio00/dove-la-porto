@@ -25,13 +25,16 @@ export interface ViewPoint {
     deleted: boolean
 }
 
-export interface ModificationPoint {
+export interface ServerModificationPoint {
     position: google.maps.LatLngLiteral,
     type: string,
     id: string | null,
-    modified: boolean,
-    localID: string | null,
     deleted: boolean
+}
+
+export interface ModificationPoint extends ServerModificationPoint {
+    modified: boolean,
+    localID: string | null
 }
 
 

@@ -6,42 +6,15 @@ import {trashTypesStr} from "../utils/Constants.ts";
 import {TrashTypeImage} from "./TrashTypeImage.tsx";
 
 export const ModifiableAdvancedMarker = (
-    {point, draggingRef, onChanged}: {//, onDeleted}: {
+    {point, draggingRef, onChanged, onRestored}: {
         point: ModificationPoint,
         draggingRef: RefObject<boolean>,
         onChanged: (modificationPoint: ModificationPoint) => void,
-        // onDeleted: (modificationPoint: ModificationPoint) => void
+        onRestored: (modificationPoint: ModificationPoint) => void
     }) => {
 
     const [infowindowOpen, setInfowindowOpen] = useState<boolean>(false);
     const [advMarkerRef, advMarker] = useAdvancedMarkerRef();
-
-    // <AdvancedMarker key={point.uuid} position={point.position} clickable={true}
-    //                 draggable={true} onDragEnd={(e) => {
-    //     console.log(e)
-    //     if (e.latLng == null) {
-    //         return
-    //     }
-    //     //update data
-    //     const newPoints = points.map((p) => {
-    //         if (p.uuid === point.uuid && e.latLng) {
-    //             const latLngLit = {
-    //                 lat: e.latLng.lat(),
-    //                 lng: e.latLng.lng()
-    //             }
-    //             return {...point, position: latLngLit, modified: true}
-    //         } else {
-    //             return p;
-    //         }
-    //     })
-    //
-    //     setPoints(newPoints)
-    //
-    // }}>
-    //     <Image width={"40px"} height={"40px"} style={{fontSize: "xx-large"}}
-    //            src={"/types/" + point.type + ".svg"} alt={"🗑️"}/>
-    //
-    // </AdvancedMarker>
 
     return (
         <>
@@ -75,6 +48,7 @@ export const ModifiableAdvancedMarker = (
                             <Container>
                                 <Row>
                                     <Col className={"text-center"}>
+
                                         <Button size={"sm"} variant="danger" onClick={
                                             () => {
                                                 onChanged({...point, modified: true, deleted: true})
@@ -82,6 +56,15 @@ export const ModifiableAdvancedMarker = (
                                         }>
                                             ✖ Elimina
                                         </Button>
+                                        {(point.id != null && point.modified) &&
+                                            <Button className={"mt-1"} size={"sm"} variant="primary" onClick={
+                                                () => {
+                                                    onRestored(point)
+                                                }
+                                            }>
+                                                ↩️ Ripristina
+                                            </Button>
+                                        }
                                     </Col>
                                 </Row>
                                 <Row className={"mt-1"}>

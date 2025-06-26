@@ -1,20 +1,33 @@
 import {InfoWindow, Map as Maps} from "@vis.gl/react-google-maps";
-import {Col, Container, Row, Button, ListGroup, Form} from "react-bootstrap";
-import {useCallback, useMemo, useRef, useState} from "react";
-import type {ModificationPoint} from "../utils/Types.ts";
+import {Col, Container, Row, Button, ListGroup, Form, Alert, Modal} from "react-bootstrap";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import type {ModificationPoint, ServerModificationPoint} from "../utils/Types.ts";
 import {ModifiableAdvancedMarker} from "../components/ModifiableAdvancedMarker.tsx";
 import {MapLegend} from "../components/MapLegend.tsx";
 import {AddNewMarker} from "../components/AddNewMarker.tsx";
 import {trashTypesStr} from "../utils/Constants.ts";
 import {useFetchViewPoints} from "../hooks/useFetchViewPoints.tsx";
+import {doApiFetchPostJson} from "../utils/DoFetch.ts";
+import {useUserDataContext} from "../hooks/useUserDataContext.tsx";
 
 const MapPos = () => {
-    const {viewPoints} = useFetchViewPoints({intervalTime: 3000, doSendNotification: false})
+
     const [toChangePoints, setToChangePoints] = useState<ModificationPoint[]>([]);
-    // const [toAddPoints, setToAddPoints] = useState<ModificationPoint[]>([]);
-    // const [toDeletePoints, setToDeletePoints] = useState<ModificationPoint[]>([]);
 
     const [infoWindowPosition, setInfoWindowPosition] = useState<google.maps.LatLngLiteral | null>(null);
+    const [error, setError] = useState<string | null>(null)
+    const [message, setMessage] = useState<string | null>(null)
+    const [showInfoModal, setShowInfoModal] = useState(false);
+    const [triggerViewPointsUpdate, setTriggerViewPointsUpdate] = useState(false);
+    const clearModifications = useRef<boolean>(false);
+    const {viewPoints} = useFetchViewPoints({intervalTime: 3000, doSendNotification: false, triggerUpdate: triggerViewPointsUpdate});
+
+    useEffect(() => {
+        if (clearModifications.current) {
+            setToChangePoints([])
+            clearModifications.current = false
+        }
+    }, [viewPoints, setToChangePoints]);
 
     const onAdd = useCallback((newPoint: ModificationPoint) => {
         //update data
@@ -29,7 +42,10 @@ const MapPos = () => {
         setToChangePoints((oldPoints: ModificationPoint[]) => {
             let found = false;
             const newPoints = oldPoints.map((p) => {
-                if (p.id === updatedPoint.id) {
+                if (p.id != null && updatedPoint.id != null && p.id === updatedPoint.id) {
+                    found = true;
+                    return updatedPoint;
+                } else if (p.localID != null && updatedPoint.localID != null && p.localID === updatedPoint.localID) {
                     found = true;
                     return updatedPoint;
                 } else {
@@ -47,7 +63,7 @@ const MapPos = () => {
         //update data
         setToChangePoints((oldPoints: ModificationPoint[]) => {
             const newPoints = oldPoints.filter((p) => {
-                if (p.id === restoredPoint.id) {
+                if (p.id != null && restoredPoint.id != null && p.id === restoredPoint.id) {
                     return false;
                 } else {
                     return true;
@@ -57,128 +73,47 @@ const MapPos = () => {
         })
     }, [setToChangePoints])
 
-    // const onMarkerDeleted = useCallback((deletedPoint: ModificationPoint) => {
-    //     //update data
-    //     setToChangePoints((oldPoints: ModificationPoint[]) => {
-    //         const newToChangePoints = oldPoints.map((p) => {
-    //             if (p.id != null && deletedPoint.id != null && p.id === deletedPoint.id) {
-    //                 return deletedPoint;
-    //             } else if (p.localID != null && deletedPoint.localID != null && p.localID === deletedPoint.localID) {
-    //                 return deletedPoint;
-    //             } else {
-    //                 return p;
-    //             }
-    //         })
-    //         return newToChangePoints;
-    //     })
-    // }, [setToChangePoints])
+    const userData = useUserDataContext();
 
-    // const onMarkerRecalled = useCallback((recalledPoint: ModificationPoint) => {
-    //     //update data
-    //     setToChangePoints((oldPoints: ModificationPoint[]) => {
-    //         const newPoints = oldPoints.map((p) => {
-    //             if (p.id === recalledPoint.id) {
-    //                 return recalledPoint;
-    //             } else {
-    //                 return p;
-    //             }
-    //         })
-    //         return newPoints;
-    //     })
-    // }, [setToChangePoints])
-
-    //
-    // const onAdd = useCallback((newPoint: ModificationPoint) => {
-    //     //update data
-    //     setToAddPoints((oldPoints: ModificationPoint[]) => {
-    //         return [...oldPoints, newPoint];
-    //     })
-    //     setInfoWindowPosition(null)
-    // }, [setToAddPoints, setInfoWindowPosition])
-
-    // const onMarkerChanged = useCallback((updatedPoint: ModificationPoint) => {
-    //     //update data
-    //     if (updatedPoint.localID != null) {
-    //         setToAddPoints((oldPoints: ModificationPoint[]) => {
-    //             const newPoints = oldPoints.map((p) => {
-    //                 if (p.localID === updatedPoint.localID) {
-    //                     return updatedPoint;
-    //                 } else {
-    //                     return p;
-    //                 }
-    //             })
-    //             return newPoints;
-    //         })
-    //     }
-    //     if (updatedPoint.id != null) {
-    //         setToChangePoints((oldPoints: ModificationPoint[]) => {
-    //             const newPoints = oldPoints.map((p) => {
-    //                 if (p.id === updatedPoint.id) {
-    //                     return updatedPoint;
-    //                 } else {
-    //                     return p;
-    //                 }
-    //             })
-    //             return newPoints;
-    //         })
-    //     }
-    // }, [setToChangePoints, setToAddPoints])
-
-    // const onMarkerDeleted = useCallback((deletedPoint: ModificationPoint) => {
-    //     //update data
-    //     if (deletedPoint.localID != null) {
-    //         setToAddPoints((oldPoints: ModificationPoint[]) => {
-    //             const newPoints = oldPoints.filter((p) => {
-    //                 if (p.localID !== deletedPoint.localID) {
-    //                     return true;
-    //                 } else {
-    //                     return false;
-    //                 }
-    //             })
-    //             return newPoints;
-    //         })
-    //     }
-    //     if (deletedPoint.id != null) {
-    //         setToChangePoints((oldPoints: ModificationPoint[]) => {
-    //             const newPoints = oldPoints.filter((p) => {
-    //                 if (p.id !== deletedPoint.id) {
-    //                     return true;
-    //                 } else {
-    //                     return false;
-    //                 }
-    //             })
-    //             return newPoints;
-    //         })
-    //     }
-    //     setToDeletePoints((oldPoints: ModificationPoint[]) => {
-    //         return [...oldPoints, deletedPoint];
-    //     })
-    // }, [setToChangePoints, setToAddPoints, setToDeletePoints])
-
-    // const onMarkerRecalled = useCallback((recalledPoint: ModificationPoint) => {
-    //     if (recalledPoint.id != null) {
-    //         setToChangePoints((oldPoints: ModificationPoint[]) => {
-    //             return [...oldPoints, recalledPoint];
-    //         })
-    //     }
-    //     if (recalledPoint.localID != null) {
-    //         setToAddPoints((oldPoints: ModificationPoint[]) => {
-    //             return [...oldPoints, recalledPoint];
-    //         })
-    //     }
-    //     setToDeletePoints((oldPoints: ModificationPoint[]) => {
-    //         const newDeletedPoints = oldPoints.filter((p) => {
-    //             if (p.id != null && recalledPoint.id != null && p.id === recalledPoint.id) {
-    //                 return false;
-    //             } else if (p.localID != null && recalledPoint.localID != null && p.localID === recalledPoint.localID) {
-    //                 return false;
-    //             } else {
-    //                 return true;
-    //             }
-    //         })
-    //         return newDeletedPoints;
-    //     })
-    // }, [setToChangePoints, setToDeletePoints])
+    const saveModifications = useCallback(async () => {
+        setMessage(null)
+        setError(null)
+        const toSendPoints: ServerModificationPoint[] = toChangePoints.filter(
+            (p) => {
+                if (p.id == null && p.localID != null && p.deleted) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }).map((mp) => {
+            return {
+                deleted: mp.deleted,
+                id: mp.id,
+                position: {
+                    lat: mp.position.lat,
+                    lng: mp.position.lng
+                },
+                type: mp.type
+            }
+        })
+        if (toSendPoints.length === 0) {
+            setMessage("Nessuna modifica da salvare")
+            return;
+        }
+        const {data, error} = await doApiFetchPostJson("/api/positionsSet", userData.currentUser, {
+            points: toSendPoints
+        })
+        if (error) {
+            setError(error)
+            return
+        }
+        if (data) {
+            setMessage(data)
+            clearModifications.current = true
+            setTriggerViewPointsUpdate(!triggerViewPointsUpdate)
+            // setToChangePoints([])
+        }
+    }, [toChangePoints, triggerViewPointsUpdate, userData.currentUser])
 
     const draggingRef = useRef<boolean>(false);
 
@@ -223,46 +158,6 @@ const MapPos = () => {
         return combinedModificationPoints;
     }, [viewPoints, toChangePoints]);
 
-    // const memoPoints = useMemo<ModificationPoint[]>(() => {
-    //     const combinedModificationPoints: Map<string, ModificationPoint> = new Map()
-    //     for (const viewPoint of viewPoints) {
-    //         combinedModificationPoints.set(viewPoint.id, {
-    //             localID: null,
-    //             id: viewPoint.id,
-    //             type: viewPoint.type,
-    //             position: viewPoint.position,
-    //             modified: false
-    //         })
-    //     }
-    //     for (const toChangePoint of toChangePoints) {
-    //         if (!toChangePoint.id) {
-    //             continue;
-    //         }
-    //         combinedModificationPoints.set(toChangePoint.id, {
-    //             localID: null,
-    //             id: toChangePoint.id,
-    //             type: toChangePoint.type,
-    //             position: toChangePoint.position,
-    //             modified: true
-    //         })
-    //     }
-    //     for (const toAddPoint of toAddPoints) {
-    //         if (!toAddPoint.localID) {
-    //             continue;
-    //         }
-    //         combinedModificationPoints.set(toAddPoint.localID, {
-    //             localID: toAddPoint.localID,
-    //             id: null,
-    //             type: toAddPoint.type,
-    //             position: toAddPoint.position,
-    //             modified: true
-    //         })
-    //     }
-    //     for (const toDeletePoint of toDeletePoints) {
-    //
-    //     }
-    // }, [viewPoints, toDeletePoints, toAddPoints, toChangePoints]);
-
 
     return (
         <>
@@ -275,19 +170,13 @@ const MapPos = () => {
                             <Maps
                                 mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
                                 clickableIcons={false}
-                                // className={"vh-100 vw-100 position-fixed"}
-                                //className={"vh-100"}
                                 style={{maxHeight: "90vh", height: "90vh"}}
                                 defaultCenter={{lat: 43.1710196, lng: 10.569224}}
                                 defaultZoom={14}
                                 gestureHandling={'greedy'}
                                 disableDefaultUI={true}
-                                // onDragstart={(e) => {
-                                //     console.log(e)
-                                //     draggning = true;
-                                // }}
+
                                 onClick={(e) => {
-                                    // console.log(e)
                                     if (draggingRef.current) {
                                         draggingRef.current = false
                                         return;
@@ -305,12 +194,10 @@ const MapPos = () => {
                             >
 
                                 {Array.from(memoPoints).map(([k, point]) => (
-
                                     <ModifiableAdvancedMarker key={k} point={point} draggingRef={draggingRef}
-                                                              onChanged={onMarkerChanged}/>
-
+                                                              onChanged={onMarkerChanged}
+                                                              onRestored={onMarkerRestored}/>
                                 ))}
-
 
                             </Maps>
                             {infoWindowPosition && (
@@ -326,12 +213,51 @@ const MapPos = () => {
                     <Col md={3}>
                         <Container className={"text-center mt-2"}>
                             <Button disabled={!memoModifications}
-                                    variant={memoModifications ? "primary" : "outline-secondary"}>
+                                    variant={memoModifications ? "primary" : "outline-secondary"}
+                                    onClick={saveModifications}>
                                 {memoModifications ? "Salva modifiche" : "Non ci sono modifiche da salvare"}
                             </Button>
                         </Container>
+                        <Container className={"text-center mt-2 me-4"}>
+                            {error && <Row>
+                                <Alert variant={"danger"} className={"p-1"}>{error}</Alert>
+                            </Row>}
+                            {message && <Row>
+                                <Alert variant={"success"} className={"p-1"}>{message}</Alert>
+                            </Row>}
+                            {(!message && !error) && <Row>
+                                <Alert variant={"info"} className={"p-0"}>
+                                    <Button variant={"link"} onClick={() => setShowInfoModal(true)}>
+                                        Più info
+                                    </Button>
+                                </Alert>
+                            </Row>}
+                        </Container>
 
-                        <ListGroup className={"overflow-y-scroll mt-2"} style={{maxHeight: "85vh", height: "85vh"}}
+                        <Modal show={showInfoModal} onHide={() => setShowInfoModal(false)}>
+                            <Modal.Header closeButton={true}>
+                                <Modal.Title>Modificare le posizioni</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                In questa sezione puoi modificare le posizioni di tutte le posizioni presenti nella
+                                mappa. Puoi anche crearne di nuove o eliminarle.<br/>
+                                <ul>
+                                    <li>Per creare una nuova posizione clicca sulla mappa e premi Aggiungi.</li>
+
+                                    <li>Per modificare il tipo o eliminare una postazione è possibile cliccare direttamente sul
+                                punto oppure si può agire dalla lista sulla destra.</li>
+                                    <li>Per modificare la posizione di un punto basta trascinarlo sulla mappa.</li>
+                                    <li>Se si è modificato un punto per errore è possibile ripristinarlo facendo clic sul
+                                pulsante Ripristina (tale funzione è disponibile anche nel menu che compare cliccando
+                                sul punto.</li>
+                                    <li>Infine se si elimina un punto per errore lo si può riprendere dal menù a destra
+                                premendo Riprendi.</li>
+                                </ul>
+                            </Modal.Body>
+                        </Modal>
+
+                        <ListGroup className={"overflow-y-scroll overflow-x-hidden mt-2"}
+                                   style={{maxHeight: "75vh", height: "75vh"}}
                                    variant={"flush"}>
                             {Array.from(memoPoints).map(([k, point]) => (
                                 <ListGroup.Item key={k + "rightsideList"} variant={
@@ -340,14 +266,14 @@ const MapPos = () => {
                                     <Container>
                                         <Row>
                                             <Col>
-                                                {point.deleted && "[DELETED] " }ID: {point.id != null ? point.id : "-nuovo-"}
+                                                {point.deleted && "[DELETED] "}ID: {point.id != null ? point.id : "-nuovo-"}
                                             </Col>
                                         </Row>
                                         <Row className={"mt-1"}>
                                             <Col>
                                                 {point.deleted ?
                                                     "" + point.type
-                                                :
+                                                    :
                                                     <Form.Select size={"sm"} value={point.type} onChange={
                                                         (e) => {
                                                             onMarkerChanged({
@@ -379,29 +305,38 @@ const MapPos = () => {
                                                 {point.deleted ?
                                                     <Button size={"sm"} variant="primary"
                                                             onClick={() => {
-                                                                onMarkerChanged({...point, modified: true, deleted: false})
+                                                                onMarkerChanged({
+                                                                    ...point,
+                                                                    modified: true,
+                                                                    deleted: false
+                                                                })
                                                             }
-                                                    }>
+                                                            }>
                                                         🔃 Riprendi
                                                     </Button>
-                                                :
+                                                    :
                                                     <>
-                                                    <Button size={"sm"} variant="danger" onClick={
-                                                        () => {
-                                                            onMarkerChanged({...point, modified: true, deleted: true})
-                                                        }
-                                                    }>
-                                                        ✖ Elimina
-                                                    </Button>
-                                                    {(point.id != null && point.modified) &&
-                                                        <Button className={"ms-1"} size={"sm"} variant="primary" onClick={
+                                                        <Button size={"sm"} variant="danger" onClick={
                                                             () => {
-                                                                onMarkerRestored(point)
+                                                                onMarkerChanged({
+                                                                    ...point,
+                                                                    modified: true,
+                                                                    deleted: true
+                                                                })
                                                             }
                                                         }>
-                                                            ↩️ Ripristina
+                                                            ✖ Elimina
                                                         </Button>
-                                                    }
+                                                        {(point.id != null && point.modified) &&
+                                                            <Button className={"ms-1"} size={"sm"} variant="primary"
+                                                                    onClick={
+                                                                        () => {
+                                                                            onMarkerRestored(point)
+                                                                        }
+                                                                    }>
+                                                                ↩️ Ripristina
+                                                            </Button>
+                                                        }
                                                     </>
 
                                                 }
@@ -411,49 +346,8 @@ const MapPos = () => {
                                     </Container>
                                 </ListGroup.Item>
 
-
-                                // <p key={point.uuid + "test"}>{point.uuid}: <br/>{point.position.lat},<br/>{point.position.lng}<br/>,{point.type},{point.modified ? "modified" : "not modified"}
-                                // </p>
                             ))}
 
-                            {/*{toDeletePoints.map(deletedPoint => (*/}
-                            {/*    <ListGroup.Item key={deletedPoint.id + "test"} variant={"danger"}>*/}
-                            {/*        <Container>*/}
-                            {/*            <Row>*/}
-                            {/*                <Col>*/}
-                            {/*                    [DELETED] ID: {deletedPoint.id}*/}
-                            {/*                </Col>*/}
-                            {/*            </Row>*/}
-                            {/*            <Row className={"mt-1"}>*/}
-                            {/*                <Col>*/}
-                            {/*                    point.type*/}
-                            {/*                </Col>*/}
-                            {/*            </Row>*/}
-                            {/*            <Row className={"mt-1"}>*/}
-                            {/*                <Col>*/}
-                            {/*                    Latitudine: {deletedPoint.position.lat.toFixed(6)}*/}
-                            {/*                </Col>*/}
-                            {/*            </Row>*/}
-                            {/*            <Row className={"mt-1"}>*/}
-                            {/*                <Col>*/}
-                            {/*                    Longitudine: {deletedPoint.position.lng.toFixed(6)}*/}
-                            {/*                </Col>*/}
-                            {/*            </Row>*/}
-                            {/*            <Row className={"mt-1"}>*/}
-                            {/*                <Col className={"text-center"}>*/}
-                            {/*                    <Button size={"sm"} variant="primary"*/}
-                            {/*                            onClick={() => onMarkerRecalled(deletedPoint)}>*/}
-                            {/*                        🔃 Riprendi*/}
-                            {/*                    </Button>*/}
-                            {/*                </Col>*/}
-                            {/*            </Row>*/}
-                            {/*        </Container>*/}
-                            {/*    </ListGroup.Item>*/}
-
-
-                            {/*    // <p key={point.uuid + "test"}>{point.uuid}: <br/>{point.position.lat},<br/>{point.position.lng}<br/>,{point.type},{point.modified ? "modified" : "not modified"}*/}
-                            {/*    // </p>*/}
-                            {/*))}*/}
                         </ListGroup>
                     </Col>
                 </Row>

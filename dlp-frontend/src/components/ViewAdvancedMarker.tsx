@@ -10,7 +10,7 @@ export const ViewAdvancedMarker = ({point}: { point: ViewPoint }) => {
 
     return (
         <>
-            <AdvancedMarker key={point.uuid} position={point.position} ref={advMarkerRef}
+            <AdvancedMarker position={point.position} ref={advMarkerRef}
                             clickable={true} onClick={() => setInfowindowOpen(true)}>
                 <TrashTypeImage size={"40px"} fontSize={"xx-large"} type={point.type}/>
             </AdvancedMarker>

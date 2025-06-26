@@ -5,7 +5,7 @@ import {fireDB} from "../utils/Firebase.ts";
 
 
 export const useFetchViewPoints = (
-    {intervalTime, doSendNotification}: {intervalTime: number, doSendNotification: boolean}
+    {intervalTime, doSendNotification, triggerUpdate}: {intervalTime: number, doSendNotification: boolean, triggerUpdate: boolean}
 ) => {
     const [viewPoints, setViewPoints] = useState<ViewPoint[]>([]);
 
@@ -75,7 +75,7 @@ export const useFetchViewPoints = (
         return () => {
             clearInterval(interval);
         };
-    }, [intervalTime, doSendNotification]);
+    }, [intervalTime, doSendNotification, triggerUpdate]);
 
     return {viewPoints}
 }
