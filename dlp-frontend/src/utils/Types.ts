@@ -3,6 +3,7 @@
 // export interface Point extends ModificationPoint {id: string}
 
 import type {User} from "firebase/auth";
+import type { Timestamp } from "firebase/firestore";
 
 export interface UserData {
     currentUser: User | null,
@@ -20,10 +21,17 @@ export interface ViewPoint {
     position: google.maps.LatLngLiteral,
     type: string,
     id: string,
+    lastModified: Timestamp,
+    deleted: boolean
 }
 
-export interface ModificationPoint extends ViewPoint {
-    modified: boolean
+export interface ModificationPoint {
+    position: google.maps.LatLngLiteral,
+    type: string,
+    id: string | null,
+    modified: boolean,
+    localID: string | null,
+    deleted: boolean
 }
 
 

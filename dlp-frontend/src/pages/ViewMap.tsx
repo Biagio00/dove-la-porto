@@ -4,7 +4,7 @@ import {ViewAdvancedMarker} from "../components/ViewAdvancedMarker.tsx";
 import {useFetchViewPoints} from "../hooks/useFetchViewPoints.tsx";
 
 const ViewMap = () => {
-    const {viewPoints} = useFetchViewPoints({intervalTime: 3000})
+    const {viewPoints} = useFetchViewPoints({intervalTime: 3000, doSendNotification: true})
 
     return (<>
         <MapLegend/>

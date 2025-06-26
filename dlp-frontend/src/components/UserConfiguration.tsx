@@ -76,10 +76,12 @@ export const UserConfiguration = (
         // <Container className={"border rounded pt-1 pb-1  mt-1"}>
 
             <tr className={"justify-content-center"}>
-                <td className={"align-content-center"}>UID: {userInfo.userID}</td>
-                <td className={"pe-0 text-rigth align-content-center"}>Ruolo: </td>
+                <td className={"align-content-center text-wrap"} style={{maxWidth: "10vw", overflow: "hidden"}}>
+                    UID: {userInfo.userID}
+                </td>
+                <td className={"align-content-center"}>Ruolo: </td>
                 <td>
-                    <Form.Control type={"input"} value={newRole} onChange={handleRoleChange}></Form.Control>
+                    <Form.Control style={{minWidth: 50, maxWidth: 50}} type={"input"} value={newRole} onChange={handleRoleChange}></Form.Control>
                 </td>
                 <td>
                     <Button variant={toSave ? "primary" : "outline-primary"} disabled={!toSave || loading}
