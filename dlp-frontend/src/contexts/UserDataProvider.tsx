@@ -1,9 +1,10 @@
-import {useEffect, useState} from "react";
+import {type ReactNode, useEffect, useState} from "react";
 import {onAuthStateChanged, type User} from "firebase/auth";
 import {fireAuth} from "../utils/Firebase.ts";
 import {UserDataContext} from "./UserDataContext.tsx";
+import {useFetchUserRole} from "../hooks/useFetchUserRole.tsx";
 
-export function UserDataProvider({children}: { children: React.ReactNode }) {
+export function UserDataProvider({children}: { children: ReactNode }) {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [loadingAuthLib, setLoadingAuthLib] = useState<boolean>(true);
     const [role, setRole] = useState<number>(0);
@@ -12,11 +13,12 @@ export function UserDataProvider({children}: { children: React.ReactNode }) {
         const unsubscribe = onAuthStateChanged(fireAuth, user => {
             setCurrentUser(user);
             setLoadingAuthLib(false);
-            //TODO: setRole on firestore meglio fare un altro useEffect in modo da non incombere in errori
         })
 
         return unsubscribe
     }, []);
+
+    useFetchUserRole({userID: currentUser?.uid, setRole: setRole})
 
     return (
         <UserDataContext.Provider value={{

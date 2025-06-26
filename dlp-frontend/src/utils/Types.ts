@@ -11,11 +11,15 @@ export interface UserData {
     role: number
 }
 
+export interface UserInfo {
+    userID: string,
+    role: number
+}
 
 export interface ViewPoint {
     position: google.maps.LatLngLiteral,
     type: string,
-    uuid: string,
+    id: string,
 }
 
 export interface ModificationPoint extends ViewPoint {

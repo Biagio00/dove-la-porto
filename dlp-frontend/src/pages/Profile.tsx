@@ -25,7 +25,9 @@ export const Profile = () => {
                 <Row className={"mt-2 justify-content-center"}>
                     <Col md={6} className={"mt-5 text-center h5"}>
                         Hai fatto l'accesso come <b>{userData.currentUser.email}</b><br/>
-                        Il tuo ruolo attuale è <b>{roleNameFromNum(userData.role)}</b>
+                        Il tuo ruolo attuale è <b>{roleNameFromNum(userData.role)}</b><br/>
+                        Per cambiare il tuo ruolo, comunica il seguente ID all'amministratore:<br/>
+                        <b>{userData.currentUser.uid}</b>
                     </Col>
                 </Row>
             )}

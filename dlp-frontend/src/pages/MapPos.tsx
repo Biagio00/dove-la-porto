@@ -11,9 +11,9 @@ import {v4 as uuidv4} from 'uuid';
 const MapPos = () => {
     const [points, setPoints] = useState<ModificationPoint[]>([
         //test data
-        {uuid: uuidv4(), position: {lat: 43.166221, lng: 10.567741}, modified: false, type: "solo-vetro"},
-        {uuid: uuidv4(), position: {lat: 43.167438, lng: 10.579719}, modified: false, type: "discarica"},
-        {uuid: uuidv4(), position: {lat: 43.170405, lng: 10.574837}, modified: false, type: "completa"}
+        {id: uuidv4(), position: {lat: 43.166221, lng: 10.567741}, modified: false, type: "solo-vetro"},
+        {id: uuidv4(), position: {lat: 43.167438, lng: 10.579719}, modified: false, type: "discarica"},
+        {id: uuidv4(), position: {lat: 43.170405, lng: 10.574837}, modified: false, type: "completa"}
     ]);
 
     const [toDeletePoints, setToDeletePoints] = useState<ModificationPoint[]>([]);
@@ -26,7 +26,7 @@ const MapPos = () => {
         //update data
         setPoints((oldPoints: ModificationPoint[]) => {
             const newPoints = oldPoints.map((p) => {
-                if (p.uuid === updatedPoint.uuid) {
+                if (p.id === updatedPoint.id) {
                     return updatedPoint;
                 } else {
                     return p;
@@ -40,7 +40,7 @@ const MapPos = () => {
         //update data
         setPoints((oldPoints: ModificationPoint[]) => {
             const newPoints = oldPoints.filter((p) => {
-                if (p.uuid !== deletedPoint.uuid) {
+                if (p.id !== deletedPoint.id) {
                     return true;
                 } else {
                     return false;
@@ -65,7 +65,7 @@ const MapPos = () => {
         onAdd(recalledPoint);
         setToDeletePoints((oldPoints: ModificationPoint[]) => {
             const newDeletedPoints = oldPoints.filter((p) => {
-                if (p.uuid !== recalledPoint.uuid) {
+                if (p.id !== recalledPoint.id) {
                     return true;
                 } else {
                     return false;
@@ -132,7 +132,7 @@ const MapPos = () => {
 
                                 {points.map(point => (
 
-                                    <ModifiableAdvancedMarker key={point.uuid} point={point} draggingRef={draggingRef}
+                                    <ModifiableAdvancedMarker key={point.id} point={point} draggingRef={draggingRef}
                                                               onChanged={onMarkerChanged}
                                                               onDeleted={onMarkerDeleted}/>
 
@@ -176,11 +176,11 @@ const MapPos = () => {
 
                         <ListGroup className={"overflow-y-scroll mt-2"} style={{maxHeight: "85vh", height: "85vh"}} variant={"flush"}>
                         {points.map(point => (
-                            <ListGroup.Item key={point.uuid + "test"} variant={point.modified ? "warning" : ""}>
+                            <ListGroup.Item key={point.id + "test"} variant={point.modified ? "warning" : ""}>
                                 <Container>
                                     <Row>
                                         <Col>
-                                            ID: {point.uuid}
+                                            ID: {point.id}
                                         </Col>
                                     </Row>
                                     <Row className={"mt-1"}>
@@ -226,11 +226,11 @@ const MapPos = () => {
                         ))}
 
                             {toDeletePoints.map(deletedPoint => (
-                                <ListGroup.Item key={deletedPoint.uuid + "test"} variant={"danger"}>
+                                <ListGroup.Item key={deletedPoint.id + "test"} variant={"danger"}>
                                     <Container>
                                         <Row>
                                             <Col>
-                                                [DELETED] ID: {deletedPoint.uuid}
+                                                [DELETED] ID: {deletedPoint.id}
                                             </Col>
                                         </Row>
                                         <Row className={"mt-1"}>

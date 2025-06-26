@@ -1,19 +1,23 @@
 {
   "name": "dlp-backend",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "",
   "main": "dist/server.js",
+  "type": "module",
   "scripts": {
-    "start": "ts-node src/server.ts"
+    "start": "ts-node src/server.ts",
+    "startsx": "npx tsx src/server.ts"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "firebase-admin": "^13.4.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.9",
-    "ts-node": "^10.9.2",
     "typescript": "^5.5.3"
   },
   "private": true

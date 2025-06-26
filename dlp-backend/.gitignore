@@ -11,3 +11,5 @@ yarn-error.log*
 .vscode/*
 
 .env
+
+firebase-adminsdk-pkey.json

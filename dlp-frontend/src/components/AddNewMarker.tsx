@@ -18,7 +18,7 @@ export const AddNewMarker = (
             position: position,
             type: type,
             modified: true,
-            uuid: uuidv4()
+            id: uuidv4()
         }
         onAdd(mp)
     }

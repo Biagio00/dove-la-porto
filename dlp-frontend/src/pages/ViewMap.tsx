@@ -1,17 +1,10 @@
-import {useState} from "react";
-import type {ViewPoint} from "../utils/Types.ts";
 import {Map} from "@vis.gl/react-google-maps";
-import {v4 as uuidv4} from "uuid";
 import {MapLegend} from "../components/MapLegend.tsx";
 import {ViewAdvancedMarker} from "../components/ViewAdvancedMarker.tsx";
+import {useFetchViewPoints} from "../hooks/useFetchViewPoints.tsx";
 
 const ViewMap = () => {
-    const [points, setPoints] = useState<ViewPoint[]>([
-        //test data
-        {uuid: uuidv4(), position: {lat: 43.166221, lng: 10.567741}, type: "solo-vetro"},
-        {uuid: uuidv4(), position: {lat: 43.167438, lng: 10.579719}, type: "discarica"},
-        {uuid: uuidv4(), position: {lat: 43.170405, lng: 10.574837}, type: "completa"}
-    ]);
+    const {viewPoints} = useFetchViewPoints({intervalTime: 3000})
 
     return (<>
         <MapLegend/>
@@ -27,11 +20,8 @@ const ViewMap = () => {
             disableDefaultUI={true}
         >
 
-            {points.map(point => (
-
-                <ViewAdvancedMarker key={point.uuid} point={point}/>
-
-
+            {viewPoints.map(point => (
+                <ViewAdvancedMarker key={point.id} point={point}/>
             ))}
 
         </Map>

@@ -1,4 +1,5 @@
 export const trashTypesStr: string[] = ["completa", "solo-vetro", "discarica"]
+export const serverApiAddr = "http://localhost:3000"
 
 export const roleNameFromNum = (role: number): string => {
     switch (role) {
