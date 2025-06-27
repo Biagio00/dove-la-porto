@@ -118,7 +118,6 @@ const MapPos = () => {
             setMessage(data)
             clearModifications.current = true
             setTriggerViewPointsUpdate(!triggerViewPointsUpdate)
-            // setToChangePoints([])
         }
     }, [toChangePoints, triggerViewPointsUpdate, userData.currentUser])
 
@@ -277,7 +276,7 @@ const MapPos = () => {
                         </Modal>
 
                         <ListGroup className={"overflow-y-scroll overflow-x-hidden mt-2"}
-                                   style={{maxHeight: "75vh", height: "75vh"}}
+                                   style={{maxHeight: "68vh", height: "68vh"}}
                                    variant={"flush"}>
                             {Array.from(memoPoints).map(([k, point]) => (
                                 <ListGroup.Item key={k + "rightsideList"} variant={

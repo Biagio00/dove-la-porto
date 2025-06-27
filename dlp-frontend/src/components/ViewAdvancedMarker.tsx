@@ -24,7 +24,7 @@ export const ViewAdvancedMarker = ({point}: { point: ViewPoint }) => {
                             <Col className={"text-center"}>
                                 <Button variant={"primary"}
                                         href={"geo:" + point.position.lat + "," + point.position.lng}>
-                                    Viaggia qui 🚗
+                                    Viaggia qui 🚗<br/>(solo android)
                                 </Button>
                             </Col>
                         </Row>
