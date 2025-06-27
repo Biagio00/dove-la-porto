@@ -6,7 +6,7 @@ export const TopNavbar = () => {
     const userData = useUserDataContext();
 
     return (
-        <Navbar collapseOnSelect expand="sm" className="bg-body-tertiary" sticky="top">
+        <Navbar collapseOnSelect expand={"sm"} className={"bg-body-tertiary nav-underline"} sticky={"top"}>
             <Container>
                 <Navbar.Brand as={NavLink} to="/"><Image width={40} height={40} src={"/dlp.svg"} alt={"logo"}/> Dove la
                     porto?</Navbar.Brand>
@@ -19,7 +19,6 @@ export const TopNavbar = () => {
                         {userData.role >= 5 && <Nav.Link as={NavLink} to="/users">Utenti</Nav.Link>}
                     </Nav>
                     <Nav>
-                        {/*<Nav.Link as={NavLink} to="/">Logout</Nav.Link>*/}
                         <Nav.Link as={NavLink} to="/profile">{userData.currentUser == null ? "Accedi" : "Profilo"}</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>

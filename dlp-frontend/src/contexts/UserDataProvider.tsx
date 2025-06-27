@@ -4,7 +4,7 @@ import {fireAuth} from "../utils/Firebase.ts";
 import {UserDataContext} from "./UserDataContext.tsx";
 import {useFetchUserRole} from "../hooks/useFetchUserRole.tsx";
 
-export function UserDataProvider({children}: { children: ReactNode }) {
+export const UserDataProvider = ({children}: { children: ReactNode })  => {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [loadingAuthLib, setLoadingAuthLib] = useState<boolean>(true);
     const [role, setRole] = useState<number>(0);

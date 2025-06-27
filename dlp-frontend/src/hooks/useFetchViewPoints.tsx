@@ -3,12 +3,14 @@ import type {ViewPoint} from "../utils/Types.ts";
 import {useEffect, useState} from 'react';
 import {fireDB} from "../utils/Firebase.ts";
 import {sendUpdatedPointsNotification} from "../utils/NotificationManager.ts";
+import {useOnlineOfflineContext} from "./useOnlineOfflineContext.tsx";
 
 
 export const useFetchViewPoints = (
     {intervalTime, doSendNotification, triggerUpdate}: {intervalTime: number, doSendNotification: boolean, triggerUpdate: boolean}
 ) => {
     const [viewPoints, setViewPoints] = useState<ViewPoint[]>([]);
+    const {online} = useOnlineOfflineContext();
 
     useEffect(() => {
         let lastModified: Timestamp | null = null;
@@ -49,6 +51,9 @@ export const useFetchViewPoints = (
         fetchPoints()
 
         const checkLastModified = async () => {
+            if (!online) {
+                return
+            }
             if (lastModified == null) {
                 await fetchPoints()
                 return;
@@ -61,6 +66,9 @@ export const useFetchViewPoints = (
                 const querySnapshot = await getDocs(lastPointsQuery);
                 if (querySnapshot.docs.length > 0) {
                     console.log("New points found");
+                    if (!online) {
+                        return
+                    }
                     await fetchPoints()
                     if (doSendNotification) {
                         await sendUpdatedPointsNotification(querySnapshot.docs.length)
@@ -76,7 +84,7 @@ export const useFetchViewPoints = (
         return () => {
             clearInterval(interval);
         };
-    }, [intervalTime, doSendNotification, triggerUpdate]);
+    }, [intervalTime, doSendNotification, triggerUpdate, online]);
 
     return {viewPoints}
 }

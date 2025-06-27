@@ -5,10 +5,14 @@
 import type {User} from "firebase/auth";
 import type { Timestamp } from "firebase/firestore";
 
+export interface OnlineOffline {
+    online: boolean;
+}
+
+
 export interface UserData {
     currentUser: User | null,
     loading: boolean,
-    // error: string | null,
     role: number
 }
 

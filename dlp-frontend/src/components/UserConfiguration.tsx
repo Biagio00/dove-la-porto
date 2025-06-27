@@ -3,6 +3,7 @@ import {Button, Form} from "react-bootstrap";
 import {type ChangeEvent, useEffect, useState} from "react";
 import {doApiFetchPostJson} from "../utils/DoFetch.ts";
 import {useUserDataContext} from "../hooks/useUserDataContext.tsx";
+import {useOnlineOfflineContext} from "../hooks/useOnlineOfflineContext.tsx";
 
 export const UserConfiguration = (
     {userInfo, setError, setMessage, executeUpdate}:
@@ -14,14 +15,15 @@ export const UserConfiguration = (
     }
 ) => {
 
-    const [newRole, setNewRole] = useState<string>(""+userInfo.role);
+    const [newRole, setNewRole] = useState<string>("" + userInfo.role);
     const [toSave, setToSave] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
     const userData = useUserDataContext();
+    const {online} = useOnlineOfflineContext();
 
     useEffect(() => {
-        setNewRole(""+userInfo.role)
+        setNewRole("" + userInfo.role)
     }, [userInfo]);
 
     const handleRoleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -48,13 +50,17 @@ export const UserConfiguration = (
         setLoading(true)
         setError(null)
         setMessage(null)
-        const {data, error} = await doApiFetchPostJson("/api/userSet", userData.currentUser, {uid: userInfo.userID, role: newRole})
+        const {data, error} = await doApiFetchPostJson("/api/userSet", userData.currentUser, {
+            uid: userInfo.userID,
+            role: newRole
+        })
         if (error) {
             setError(error)
         }
         if (data) {
             setMessage(data)
             setToSave(false)
+            executeUpdate()
         }
         setLoading(false)
     }
@@ -73,29 +79,26 @@ export const UserConfiguration = (
     }
 
     return (
-        // <Container className={"border rounded pt-1 pb-1  mt-1"}>
-
-            <tr className={"justify-content-center"}>
-                <td className={"align-content-center text-wrap"} style={{maxWidth: "10vw", overflow: "hidden"}}>
-                    UID: {userInfo.userID}
-                </td>
-                <td className={"align-content-center"}>Ruolo: </td>
-                <td>
-                    <Form.Control style={{minWidth: 50, maxWidth: 50}} type={"input"} value={newRole} onChange={handleRoleChange}></Form.Control>
-                </td>
-                <td>
-                    <Button variant={toSave ? "primary" : "outline-primary"} disabled={!toSave || loading}
-                            onClick={handleSaveClick}>
-                        Salva
-                    </Button>
-                </td>
-                <td>
-                    <Button variant={"danger"} onClick={handleDeleteClick} disabled={loading}>
-                        Cancella
-                    </Button>
-                </td>
-            </tr>
-
-        // </Container>
+        <tr className={"justify-content-center"}>
+            <td className={"align-content-center text-wrap"} style={{maxWidth: "10vw", overflow: "hidden"}}>
+                UID: {userInfo.userID}
+            </td>
+            <td className={"align-content-center"}>Ruolo:</td>
+            <td>
+                <Form.Control style={{minWidth: 50, maxWidth: 50}} type={"input"} value={newRole}
+                              onChange={handleRoleChange}></Form.Control>
+            </td>
+            <td>
+                <Button variant={toSave ? "primary" : "outline-primary"} disabled={!toSave || loading || !online}
+                        onClick={handleSaveClick}>
+                    Salva
+                </Button>
+            </td>
+            <td>
+                <Button variant={"danger"} onClick={handleDeleteClick} disabled={loading || !online}>
+                    Cancella
+                </Button>
+            </td>
+        </tr>
     )
 }

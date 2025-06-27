@@ -9,6 +9,7 @@ import {trashTypesStr} from "../utils/Constants.ts";
 import {useFetchViewPoints} from "../hooks/useFetchViewPoints.tsx";
 import {doApiFetchPostJson} from "../utils/DoFetch.ts";
 import {useUserDataContext} from "../hooks/useUserDataContext.tsx";
+import {useOnlineOfflineContext} from "../hooks/useOnlineOfflineContext.tsx";
 
 const MapPos = () => {
 
@@ -20,7 +21,13 @@ const MapPos = () => {
     const [showInfoModal, setShowInfoModal] = useState(false);
     const [triggerViewPointsUpdate, setTriggerViewPointsUpdate] = useState(false);
     const clearModifications = useRef<boolean>(false);
-    const {viewPoints} = useFetchViewPoints({intervalTime: 3000, doSendNotification: false, triggerUpdate: triggerViewPointsUpdate});
+    const {viewPoints} = useFetchViewPoints({
+        intervalTime: 3000,
+        doSendNotification: false,
+        triggerUpdate: triggerViewPointsUpdate
+    });
+
+    const {online} = useOnlineOfflineContext()
 
     useEffect(() => {
         if (clearModifications.current) {
@@ -165,54 +172,61 @@ const MapPos = () => {
             <Container>
                 <Row>
                     <Col md={9}>
-                        <>
-                            <MapLegend/>
-                            <Maps
-                                mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
-                                clickableIcons={false}
-                                style={{maxHeight: "90vh", height: "90vh"}}
-                                defaultCenter={{lat: 43.1710196, lng: 10.569224}}
-                                defaultZoom={14}
-                                gestureHandling={'greedy'}
-                                disableDefaultUI={true}
+                        {online ?
+                            <>
+                                <MapLegend/>
+                                <Maps
+                                    mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
+                                    clickableIcons={false}
+                                    style={{maxHeight: "90vh", height: "90vh"}}
+                                    defaultCenter={{lat: 43.1710196, lng: 10.569224}}
+                                    defaultZoom={14}
+                                    gestureHandling={'greedy'}
+                                    disableDefaultUI={true}
 
-                                onClick={(e) => {
-                                    if (draggingRef.current) {
-                                        draggingRef.current = false
-                                        return;
-                                    }
-                                    draggingRef.current = false;
-                                    if (e.detail.latLng == null) {
-                                        return
-                                    }
-                                    const latLngLit = {
-                                        lat: e.detail.latLng.lat,
-                                        lng: e.detail.latLng.lng
-                                    }
-                                    setInfoWindowPosition(latLngLit);
-                                }}
-                            >
+                                    onClick={(e) => {
+                                        if (draggingRef.current) {
+                                            draggingRef.current = false
+                                            return;
+                                        }
+                                        draggingRef.current = false;
+                                        if (e.detail.latLng == null) {
+                                            return
+                                        }
+                                        const latLngLit = {
+                                            lat: e.detail.latLng.lat,
+                                            lng: e.detail.latLng.lng
+                                        }
+                                        setInfoWindowPosition(latLngLit);
+                                    }}
+                                >
 
-                                {Array.from(memoPoints).map(([k, point]) => (
-                                    <ModifiableAdvancedMarker key={k} point={point} draggingRef={draggingRef}
-                                                              onChanged={onMarkerChanged}
-                                                              onRestored={onMarkerRestored}/>
-                                ))}
+                                    {Array.from(memoPoints).map(([k, point]) => (
+                                        <ModifiableAdvancedMarker key={k} point={point} draggingRef={draggingRef}
+                                                                  onChanged={onMarkerChanged}
+                                                                  onRestored={onMarkerRestored}/>
+                                    ))}
 
-                            </Maps>
-                            {infoWindowPosition && (
-                                <InfoWindow position={infoWindowPosition} maxWidth={200}
-                                            onClose={() => setInfoWindowPosition(null)}
-                                            onCloseClick={() => setInfoWindowPosition(null)}>
-                                    <AddNewMarker position={infoWindowPosition} onAdd={onAdd}/>
-                                </InfoWindow>
+                                </Maps>
+                                {infoWindowPosition && (
+                                    <InfoWindow position={infoWindowPosition} maxWidth={200}
+                                                onClose={() => setInfoWindowPosition(null)}
+                                                onCloseClick={() => setInfoWindowPosition(null)}>
+                                        <AddNewMarker position={infoWindowPosition} onAdd={onAdd}/>
+                                    </InfoWindow>
 
-                            )}
-                        </>
+                                )}
+                            </>
+                            :
+                            <h2 style={{maxHeight: "90vh", height: "90vh"}} className={"text-center mt-5"}>
+                                Sei offline. Mappa non disponibile.
+                            </h2>
+                        }
+
                     </Col>
                     <Col md={3}>
                         <Container className={"text-center mt-2"}>
-                            <Button disabled={!memoModifications}
+                            <Button disabled={!memoModifications || !online}
                                     variant={memoModifications ? "primary" : "outline-secondary"}
                                     onClick={saveModifications}>
                                 {memoModifications ? "Salva modifiche" : "Non ci sono modifiche da salvare"}
@@ -244,14 +258,20 @@ const MapPos = () => {
                                 <ul>
                                     <li>Per creare una nuova posizione clicca sulla mappa e premi Aggiungi.</li>
 
-                                    <li>Per modificare il tipo o eliminare una postazione è possibile cliccare direttamente sul
-                                punto oppure si può agire dalla lista sulla destra.</li>
+                                    <li>Per modificare il tipo o eliminare una postazione è possibile cliccare
+                                        direttamente sul
+                                        punto oppure si può agire dalla lista sulla destra.
+                                    </li>
                                     <li>Per modificare la posizione di un punto basta trascinarlo sulla mappa.</li>
-                                    <li>Se si è modificato un punto per errore è possibile ripristinarlo facendo clic sul
-                                pulsante Ripristina (tale funzione è disponibile anche nel menu che compare cliccando
-                                sul punto.</li>
+                                    <li>Se si è modificato un punto per errore è possibile ripristinarlo facendo clic
+                                        sul
+                                        pulsante Ripristina (tale funzione è disponibile anche nel menu che compare
+                                        cliccando
+                                        sul punto.
+                                    </li>
                                     <li>Infine se si elimina un punto per errore lo si può riprendere dal menù a destra
-                                premendo Riprendi.</li>
+                                        premendo Riprendi.
+                                    </li>
                                 </ul>
                             </Modal.Body>
                         </Modal>

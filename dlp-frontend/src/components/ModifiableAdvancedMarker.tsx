@@ -24,7 +24,6 @@ export const ModifiableAdvancedMarker = (
                                     clickable={true} onClick={() => setInfowindowOpen(true)}
                                     draggable={true}
                                     onDragStart={() => {
-                                        // console.log(e)
                                         draggingRef.current = true;
                                     }}
                                     onDragEnd={(e) => {
@@ -38,7 +37,7 @@ export const ModifiableAdvancedMarker = (
                                         //update data
                                         onChanged({...point, position: latLngLit, modified: true})
                                     }}>
-                        <TrashTypeImage size={"40px"} fontSize={"xx-large"} type={point.type}/>
+                        <TrashTypeImage size={"40px"} fontSize={"x-large"} type={point.type}/>
                     </AdvancedMarker>
                     {infowindowOpen && (
                         <InfoWindow anchor={advMarker} maxWidth={200}

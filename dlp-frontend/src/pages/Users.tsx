@@ -4,6 +4,7 @@ import {UserConfiguration} from "../components/UserConfiguration.tsx";
 import {type ChangeEvent, useState} from "react";
 import {doApiFetchPostJson} from "../utils/DoFetch.ts";
 import {useUserDataContext} from "../hooks/useUserDataContext.tsx";
+import {useOnlineOfflineContext} from "../hooks/useOnlineOfflineContext.tsx";
 
 const Users = () => {
     const [error, setError] = useState<string | null>(null)
@@ -18,10 +19,7 @@ const Users = () => {
     const {usersInfo} = useFetchUsersInfo({triggerUpdate});
 
     const userData = useUserDataContext();
-
-    const executeUpdate = () => {
-        setTriggerUpdate(!triggerUpdate)
-    }
+    const {online} = useOnlineOfflineContext();
 
     const handleNewUserRoleChange = (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -60,7 +58,7 @@ const Users = () => {
             setNewUserRole("")
             setToAddUid(false)
             setToAddRole(false)
-            executeUpdate()
+            setTriggerUpdate((val) => !val)
         }
         setLoading(false)
     }
@@ -93,14 +91,13 @@ const Users = () => {
             {usersInfo && usersInfo.map((userInfo) => (
                 <UserConfiguration key={userInfo.userID} userInfo={userInfo}
                                    setError={setError} setMessage={setMessage}
-                                   executeUpdate={executeUpdate}/>
+                                   executeUpdate={() => {setTriggerUpdate((val) => !val)}}/>
             ))}
                     </tbody>
                 </Table>
             </Row>
 
             <Container className={"border rounded pt-1 pb-1 mt-2"}>
-
                 <Row className={"justify-content-center mt-2"}>
                     <Col md={"auto"} className={"align-content-center"}><h5>Aggiungi nuovo utente</h5></Col>
                 </Row>
@@ -115,15 +112,12 @@ const Users = () => {
                     </Col>
                     <Col md={"auto"}>
                         <Button variant={(toAddRole&&toAddUid) ? "primary" : "outline-primary"}
-                                disabled={!(toAddRole&&toAddUid) || loading}
+                                disabled={!(toAddRole&&toAddUid) || loading || !online}
                                 onClick={handleAddNewClick}>
                             Aggiungi
                         </Button>
                     </Col>
                 </Row>
-
-
-
             </Container>
         </Container>
     )
